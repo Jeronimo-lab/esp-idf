@@ -2,20 +2,35 @@
 #include "buttons.h"
 #include "display.h"
 #include "esp_log.h"
+#include <time.h>
 
-int position_x; 
-int position_y;
+#define UI_PERIOD_MS 50
+#define DESPLAZAMIENTO 5
+#define SQUARE_SIZE 10
+#define X_LIMIT 124
+#define Y_LIMIT 58
+
+#define MIN_RANDOM_X 5 
+#define MIN_RANDOM_Y 5  
+
+static int playerPositionX;
+static int playerPositionY;
+static int targetX;
+static int targetY;
+
 void update_square_game_state(bool display_ok){
+    
     QueueHandle_t events = buttons_event_queue();
     button_event_t ev;
 
-    while (xQueueReceive(events, &ev, 0) == pdTRUE) {
+    if (xQueueReceive(events, &ev, 50) == pdTRUE) {
         if (ev.pressed) {
             update_player_position(ev.id);
+            if (player_touches_target()) {
+                new_target_position();
+            }       
         }
     }
-
-
     if (display_ok) {
         draw_ui(buttons_read());
         display_flush();
@@ -23,25 +38,37 @@ void update_square_game_state(bool display_ok){
 }
 
 void init_square_game(void) {
-    position_x = 59;
-    position_y = 27;
+        playerPositionX = 62;
+        playerPositionY = 29;
+        targetX = 0;
+        targetY = 0;
+        srand(time(NULL)); 
+        new_target_position();
 }
 
+void new_target_position(void) {
+    targetX = MIN_RANDOM_X + rand() % (X_LIMIT - MIN_RANDOM_X + 1);
+    targetY = MIN_RANDOM_Y + rand() % (Y_LIMIT - MIN_RANDOM_Y + 1);
+}
+
+bool player_touches_target(void) {
+    return playerPositionX < targetX + SQUARE_SIZE && playerPositionX + SQUARE_SIZE > targetX &&
+           playerPositionY < targetY + SQUARE_SIZE && playerPositionY + SQUARE_SIZE > targetY;
+}
 
 void update_player_position(button_id_t button) {
-ESP_LOGI("game", "boton %d -> x=%d y=%d", button, position_x, position_y);
     switch (button) {
         case BTN_LEFT:
-            position_x -= 5; // Move left
+            playerPositionX -= DESPLAZAMIENTO; // Move left
             break;
         case BTN_RIGHT:
-            position_x += 5; // Move right
+            playerPositionX += DESPLAZAMIENTO; // Move right
             break;
         case BTN_UP:
-            position_y -= 5; // Move up
+            playerPositionY -= DESPLAZAMIENTO; // Move up
             break;
         case BTN_DOWN:
-            position_y += 5; // Move down
+            playerPositionY += DESPLAZAMIENTO; // Move down
             break;
         default:
             break;
@@ -49,7 +76,10 @@ ESP_LOGI("game", "boton %d -> x=%d y=%d", button, position_x, position_y);
 }
 
 
-void draw_ui(uint32_t pressed){
+void draw_ui(uint32_t pressed)
+{
     display_clear();
-    display_fill_rect(position_x, position_y, 10, 10, true);
+
+    display_fill_rect(playerPositionX, playerPositionY, SQUARE_SIZE, SQUARE_SIZE, true);
+    display_draw_rect(targetX, targetY, SQUARE_SIZE, SQUARE_SIZE);
 }

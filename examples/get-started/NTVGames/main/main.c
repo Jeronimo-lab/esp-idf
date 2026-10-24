@@ -150,10 +150,6 @@ void init(void){
     if (!display_ok) {
         ESP_LOGE(TAG, "display init failed - continuing without screen");
     }
-    
-        // display_clear();
-        // display_text(10, 8, "Esperando archivo!", false);
-        // display_text(10, 24, ".", false);
         
 }
 
