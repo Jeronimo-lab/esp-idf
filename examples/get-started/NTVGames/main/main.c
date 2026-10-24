@@ -24,8 +24,8 @@
 #include "freertos/task.h"
 #include "nvs_flash.h"
 #include "move_square_game.h"
-#include "move_cpn_game.h"
-#include "move_scream_game.h"
+#include "cpn_game.h"
+#include "scream_move_square.h"
 #define WIFI_SSID   "kiwi-audio"
 #define WIFI_PASS   "kiwikiwi"
 

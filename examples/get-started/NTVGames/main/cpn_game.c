@@ -13,6 +13,31 @@ static bool enemy_navaja = false;
 static bool enemy_papiro = false;
 static bool enemy_cuarzo = false;
 
+
+void draw_cpn_ui(uint32_t pressed)
+{
+    display_clear();
+    display_text(85, 5, "Cuarzo", enemy_cuarzo);
+    display_text(45, 5, "Papiro", enemy_papiro);
+    display_text(5, 5, "Navaja", enemy_navaja);
+    display_text(85, 50, "Cuarzo", cuarzo_option);
+    display_text(45, 50, "Papiro", papiro_option);
+    display_text(5, 50, "Navaja", navaja_option);
+
+    if((enemy_cuarzo && cuarzo_option) || (enemy_papiro && papiro_option) || (navaja_option && enemy_navaja)) {
+        display_text(45, 30, "EMPATE", true);
+    }
+
+    if((navaja_option && enemy_papiro) || (papiro_option && enemy_cuarzo) || (cuarzo_option && enemy_navaja)) {
+        display_text(45, 30, "GANASTE", true);
+    }
+
+    if((navaja_option && enemy_cuarzo) || (papiro_option && enemy_navaja) || (cuarzo_option && enemy_papiro)) {
+        display_text(45, 30, "PERDISTE", true);
+    }
+
+}
+
 void enemy_option() {
     int min = 1;
     int max = 3;
@@ -82,7 +107,7 @@ void update_cpn_game_state(bool display_ok){
         }
 
         if (display_ok) {
-            draw_ui(buttons_read());
+            draw_cpn_ui(buttons_read());
             display_flush();
         }
     
@@ -94,26 +119,3 @@ void init_cpn_game(void) {
 }
 
 
-void draw_ui(uint32_t pressed)
-{
-    display_clear();
-    display_text(85, 5, "Cuarzo", enemy_cuarzo);
-    display_text(45, 5, "Papiro", enemy_papiro);
-    display_text(5, 5, "Navaja", enemy_navaja);
-    display_text(85, 50, "Cuarzo", cuarzo_option);
-    display_text(45, 50, "Papiro", papiro_option);
-    display_text(5, 50, "Navaja", navaja_option);
-
-    if((enemy_cuarzo && cuarzo_option) || (enemy_papiro && papiro_option) || (navaja_option && enemy_navaja)) {
-        display_text(45, 30, "EMPATE", true);
-    }
-
-    if((navaja_option && enemy_papiro) || (papiro_option && enemy_cuarzo) || (cuarzo_option && enemy_navaja)) {
-        display_text(45, 30, "GANASTE", true);
-    }
-
-    if((navaja_option && enemy_cuarzo) || (papiro_option && enemy_navaja) || (cuarzo_option && enemy_papiro)) {
-        display_text(45, 30, "PERDISTE", true);
-    }
-
-}

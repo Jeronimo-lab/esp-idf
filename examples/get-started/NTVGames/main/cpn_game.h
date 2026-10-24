@@ -14,4 +14,4 @@ void enemy_option();
 void choose_option(button_id_t button);
 void update_cpn_game_state(bool display_ok);
 void init_cpn_game(void);
-void draw_ui(uint32_t pressed);
+void draw_cpn_ui(uint32_t pressed);

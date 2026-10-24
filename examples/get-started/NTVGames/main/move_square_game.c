@@ -32,7 +32,7 @@ void update_square_game_state(bool display_ok){
         }
     }
     if (display_ok) {
-        draw_ui(buttons_read());
+        draw_move_ui(buttons_read());
         display_flush();
     }
 }
@@ -76,7 +76,7 @@ void update_player_position(button_id_t button) {
 }
 
 
-void draw_ui(uint32_t pressed)
+void draw_move_ui(uint32_t pressed)
 {
     display_clear();
 

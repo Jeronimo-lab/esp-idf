@@ -1,4 +1,5 @@
-#include "move_square_game.h"
+#include "scream_move_square.h"
+#include "audio.h"
 #include "buttons.h"
 #include "display.h"
 #include "esp_log.h"
@@ -12,25 +13,18 @@ static int playerPositionX;
 static int playerPositionY;
 static bool audio_okey;
 
+void modify_height(int mic_level) {
+    playerPositionY = Y_MAX - (mic_level * Y_MAX) / 80;
+}
+
 void update_scream_game_state(bool display_ok){
     
-    QueueHandle_t events = buttons_event_queue();
-    button_event_t ev;
-
-    
-
-    if (xQueueReceive(events, &ev, 50) == pdTRUE) {
-        if (ev.pressed) {
-            update_player_position(ev.id);
-            if (player_touches_target()) {
-                new_target_position();
-            }       
-        }
-    }
-
     int mic_level = audio_okey ? audio_mic_level() : 0;
+
+    modify_height(mic_level);
+
     if (display_ok) {
-        draw_ui(buttons_read(), mic_level);
+        draw_scream_ui(buttons_read(), mic_level);
         display_flush();
     }
 }
@@ -38,14 +32,13 @@ void update_scream_game_state(bool display_ok){
 void init_scream_game(bool audio_ok) {
         playerPositionX = 62;
         playerPositionY = 54;
-        QueueHandle_t events = buttons_event_queue();
         audio_okey = audio_ok;
 
 }
 
 
 
-void draw_ui(uint32_t pressed, int mic_level)
+void draw_scream_ui(uint32_t pressed, int mic_level)
 {
     char line[24];
 
@@ -61,7 +54,5 @@ void draw_ui(uint32_t pressed, int mic_level)
     }
 }
 
-void modify_height(int mic_level) {
-    playerPositionY = Y_MAX - (mic_level * Y_MAX) / 80;
-}
+
 
