@@ -24,6 +24,8 @@
 #include "freertos/task.h"
 #include "nvs_flash.h"
 #include "move_square_game.h"
+#include "move_cpn_game.h"
+#include "move_scream_game.h"
 #define WIFI_SSID   "kiwi-audio"
 #define WIFI_PASS   "kiwikiwi"
 
@@ -196,7 +198,8 @@ void app_main(void)
             display_clear();
             switch (req) {
                 case FILE_1: init_square_game(); break;
-                case FILE_2: init_scream_game(); break; 
+                case FILE_2: init_scream_game(audio_ok); break; 
+                case FILE_3: init_cpn_game(); break;
                 default:     display_text(10, 8, "Esperando archivo!", false); break;
             }
         display_flush();
@@ -204,6 +207,8 @@ void app_main(void)
 
         switch (req) {
             case FILE_1: update_square_game_state(display_ok); break;
+            case FILE_2: update_scream_game_state(display_ok); break;
+            case FILE_3: update_cpn_game_state(display_ok); break;
             default: display_waiting_animation(10); break;
         }
         vTaskDelay(pdMS_TO_TICKS(20));
