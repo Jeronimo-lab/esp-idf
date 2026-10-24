@@ -153,6 +153,22 @@ void init(void){
         
 }
 
+bool initial_audio_check() {
+
+    bool audio_ok = audio_init() == ESP_OK;
+    if (audio_ok) {
+        const int notes[] = {523, 659, 784};
+        for (int i = 0; i < 3; i++) {
+            audio_play_tone(notes[i], 120);
+        }
+    } else {
+        ESP_LOGE(TAG, "Error con el audio. Se continuará sin él");
+    }
+
+    return audio_ok;
+
+}
+
 void app_main(void)
 {
     wifi_ap_start();
@@ -170,6 +186,8 @@ void app_main(void)
         gpio_set_pull_mode(s_keys[i], GPIO_PULLUP_ONLY);
     }
 
+    bool audio_ok = initial_audio_check();
+
     int last = -1; 
     while (1) {
         int req = file_requested;
@@ -178,6 +196,7 @@ void app_main(void)
             display_clear();
             switch (req) {
                 case FILE_1: init_square_game(); break;
+                case FILE_2: init_scream_game(); break; 
                 default:     display_text(10, 8, "Esperando archivo!", false); break;
             }
         display_flush();
