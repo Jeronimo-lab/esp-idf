@@ -10,4 +10,8 @@
 #include "buttons.h"
 #include "display.h"
 
-void init_game_3(bool display_ok, bool audio_ok, const int s_button_freq[BTN_COUNT]);
+void enemy_option();
+void choose_option(button_id_t button);
+void update_cpn_game_state(bool display_ok);
+void init_cpn_game(void);
+void draw_ui(uint32_t pressed);
